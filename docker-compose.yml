@@ -1,0 +1,7 @@
+version: "4.2.2"
+services:
+  mongodb:
+    image: library/mongo:4.2.2
+    container_name: mongo-db
+    ports:
+      - "27017:27017"
