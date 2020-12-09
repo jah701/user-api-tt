@@ -1,46 +1,54 @@
 package com.user.api.controller;
 
-import com.user.api.model.Role;
-import com.user.api.model.User;
-import com.user.api.repository.UserRepository;
-import org.bson.Document;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
+import com.user.api.mapper.UserMapper;
+import com.user.api.model.dto.UserRequestDto;
+import com.user.api.model.dto.UserResponseDto;
+import com.user.api.service.UserService;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final UserRepository userRepository;
+
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService, UserMapper userMapper) {
+        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponseDto> getAllUsers() {
+        return userService.findAll()
+                .stream()
+                .map(userMapper::userToUserDto)
+                .collect(Collectors.toList());
     }
 
     @PostMapping
-    public User create(@RequestBody User user) {
-        return userRepository.save(user);
+    public UserResponseDto create(@RequestBody UserRequestDto dto) {
+        return userMapper.userToUserDto(
+                userService.add(
+                        userMapper.userDtoToUser(dto)));
     }
 
-    @GetMapping("/{id}")
-    public Optional<User> read(@PathVariable String id) {
-        return userRepository.findById(id);
+    @PostMapping("/edit")
+    public UserResponseDto edit(@RequestBody UserRequestDto dto) {
+        return userMapper.userToUserDto(userMapper.userDtoToUser(dto));
     }
 
-    @GetMapping("/inject")
-    public void inject() {
-        User bob = User.builder().name("bob").roles(Set.of(Role.of("USER"))).build();
-        User alice = User.builder().name("alice").roles(Set.of(Role.of("USER"))).build();
-        userRepository.save(bob);
-        userRepository.save(alice);
+    @GetMapping("/{name}")
+    public UserResponseDto read(@PathVariable String name) {
+        return userMapper.userToUserDto(userService.findUserByName(name));
     }
 }

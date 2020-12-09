@@ -1,7 +1,6 @@
 package com.user.api.security.validation;
 
 import com.user.api.model.dto.UserRequestDto;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 

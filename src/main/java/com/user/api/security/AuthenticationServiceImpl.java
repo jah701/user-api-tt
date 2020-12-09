@@ -4,7 +4,6 @@ import com.user.api.model.User;
 import com.user.api.service.RoleService;
 import com.user.api.service.UserService;
 import org.springframework.stereotype.Service;
-
 import java.util.Set;
 
 @Service

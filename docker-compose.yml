@@ -1,33 +1,7 @@
-mongodb:
-  image: mongo
-  ports:
-    - "27017:27017"
-
-mongo-seed:
-  build: ./mongo-seed
-  links:
-    - mongodb
-
-# my webserver which uses mongo (not shown in example)
-webserver:
-  build: ./webserver
-  ports:
-    - "80:80"
-  links:
-    - mongodb
-
-#version: "3.2"
-#services:
-#  db:
-#    image: library/mongo:4.2.2
-#    ports:
-#      - 27017:27017
-#    environment:
-#      - MONGO_INITDB_DATABASE=${DB_NAME}
-#    restart: always
-#    volumes:
-#      - db-data:/data/db:delegated
-#
-#volumes:
-#  db-data:
-
+version: "4.2.2"
+services:
+  mongodb:
+    image: library/mongo:4.2.2
+    container_name: mongo-db
+    ports:
+      - "27017:27017"
